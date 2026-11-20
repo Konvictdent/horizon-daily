@@ -345,6 +345,13 @@
         "profile": "tech-news"
       },
       {
+        "name": "Google News 中文 - 人工智能",
+        "url": "https://news.google.com/rss/search?q=%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
+        "enabled": true,
+        "category": "ai-news",
+        "profile": "tech-news"
+      },
+      {
         "name": "少数派",
         "url": "https://sspai.com/feed",
         "enabled": true,
