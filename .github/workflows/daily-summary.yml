@@ -17,6 +17,8 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: write  # Needed to push the gh-pages branch
+    env:
+      TZ: Asia/Shanghai  # Label the digest with the local date
 
     steps:
       - name: Checkout code
