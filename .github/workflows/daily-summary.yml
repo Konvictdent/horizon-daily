@@ -14,7 +14,7 @@ concurrency:
 jobs:
   daily-summary:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     permissions:
       contents: write  # Needed to push the gh-pages branch
     env:
