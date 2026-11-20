@@ -1,0 +1,67 @@
+name: Daily Horizon Summary
+
+on:
+  schedule:
+    # GitHub scheduled workflows use UTC. 23:00 UTC = 07:00 Asia/Shanghai.
+    # GitHub may delay scheduled runs by a few minutes.
+    - cron: '0 23 * * *'
+  workflow_dispatch:      # Allow manual trigger
+
+concurrency:
+  group: daily-summary
+  cancel-in-progress: false
+
+jobs:
+  daily-summary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write  # Needed to push the gh-pages branch
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.26"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Prepare GitHub Actions config
+        run: cp data/config.github.json data/config.json
+
+      - name: Run Horizon
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          HORIZON_WEBHOOK_URL: https://www.pushplus.plus/send
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: uv run horizon --hours 24
+
+      - name: Set current date as environment variable
+        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          keep_files: true  # Keep existing summaries on gh-pages branch
+          commit_message: "📝 Daily Summary: ${{ env.DATE }}"
+          publish_branch: gh-pages
+          enable_jekyll: true
+
+      - name: Write job summary
+        run: |
+          echo "## Horizon daily summary generated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Date: $DATE" >> $GITHUB_STEP_SUMMARY
+          echo "- Site: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" >> $GITHUB_STEP_SUMMARY
