@@ -21,39 +21,39 @@
     "default_profile": "tech-news",
     "profile_settings": {
       "tech-news": {
-        "threshold": 7.0,
+        "threshold": 6.0,
         "topic_dedup": true
       },
       "tech-blog": {
-        "threshold": 4.0,
+        "threshold": 3.0,
         "topic_dedup": false
       },
       "finance-news": {
-        "threshold": 7.0,
+        "threshold": 5.0,
         "topic_dedup": true
       },
       "ai-models": {
-        "threshold": 6.5,
+        "threshold": 3.5,
         "topic_dedup": true
       },
       "world-news": {
-        "threshold": 6.5,
+        "threshold": 5.0,
         "topic_dedup": true
       },
       "politics-news": {
-        "threshold": 6.5,
+        "threshold": 5.0,
         "topic_dedup": true
       },
       "science-health": {
-        "threshold": 6.0,
+        "threshold": 3.5,
         "topic_dedup": true
       },
       "culture-news": {
-        "threshold": 6.0,
+        "threshold": 4.5,
         "topic_dedup": false
       },
       "oss-picks": {
-        "threshold": 5.5,
+        "threshold": 5.0,
         "topic_dedup": true
       }
     }
@@ -155,7 +155,7 @@
         "query": "created:>={since_days_7} stars:>50 fork:false archived:false",
         "sort": "stars",
         "order": "desc",
-        "per_page": 15,
+        "per_page": 20,
         "enabled": true,
         "category": "oss-new",
         "profile": "oss-picks"
@@ -165,7 +165,7 @@
         "query": "created:>={since_days_30} stars:>200 fork:false archived:false",
         "sort": "stars",
         "order": "desc",
-        "per_page": 15,
+        "per_page": 20,
         "enabled": true,
         "category": "oss-new",
         "profile": "oss-picks"
@@ -185,7 +185,7 @@
         "enabled": true,
         "category": "ai-news",
         "profile": "ai-models",
-        "max_items": 8
+        "max_items": 10
       },
       {
         "name": "Google DeepMind",
@@ -193,7 +193,7 @@
         "enabled": true,
         "category": "ai-research",
         "profile": "tech-blog",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Google AI Blog",
@@ -201,7 +201,7 @@
         "enabled": true,
         "category": "ai-news",
         "profile": "ai-models",
-        "max_items": 6
+        "max_items": 8
       },
       {
         "name": "Hugging Face Blog",
@@ -209,7 +209,7 @@
         "enabled": true,
         "category": "ai-tools",
         "profile": "ai-models",
-        "max_items": 6
+        "max_items": 8
       },
       {
         "name": "Microsoft Research",
@@ -217,7 +217,7 @@
         "enabled": true,
         "category": "ai-research",
         "profile": "tech-blog",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Berkeley BAIR",
@@ -225,7 +225,7 @@
         "enabled": true,
         "category": "ai-research",
         "profile": "tech-blog",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Apple Machine Learning",
@@ -233,7 +233,7 @@
         "enabled": true,
         "category": "ai-research",
         "profile": "tech-blog",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "MIT News AI",
@@ -249,7 +249,7 @@
         "enabled": true,
         "category": "ai-research",
         "profile": "tech-blog",
-        "max_items": 3
+        "max_items": 5
       },
       {
         "name": "AI News (smol.ai)",
@@ -257,7 +257,7 @@
         "enabled": true,
         "category": "ai-news",
         "profile": "ai-models",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Import AI",
@@ -265,7 +265,7 @@
         "enabled": true,
         "category": "ai-news",
         "profile": "ai-models",
-        "max_items": 3
+        "max_items": 4
       },
       {
         "name": "The Gradient",
@@ -273,7 +273,7 @@
         "enabled": true,
         "category": "ai-research",
         "profile": "tech-blog",
-        "max_items": 3
+        "max_items": 5
       },
       {
         "name": "Simon Willison",
@@ -281,7 +281,7 @@
         "enabled": true,
         "category": "ai-tools",
         "profile": "tech-news",
-        "max_items": 8
+        "max_items": 10
       },
       {
         "name": "vLLM Blog",
@@ -290,7 +290,7 @@
         "category": "llm-inference",
         "profile": "tech-blog",
         "content_extractor": "trafilatura",
-        "max_items": 5
+        "max_items": 6
       },
       {
         "name": "Sean Goedecke",
@@ -299,7 +299,7 @@
         "category": "software-engineering",
         "profile": "tech-blog",
         "content_extractor": "trafilatura",
-        "max_items": 5
+        "max_items": 6
       },
       {
         "name": "Semianalysis",
@@ -307,7 +307,7 @@
         "enabled": true,
         "category": "semiconductors",
         "profile": "tech-news",
-        "max_items": 5
+        "max_items": 6
       },
       {
         "name": "GitHub Blog",
@@ -315,7 +315,7 @@
         "enabled": true,
         "category": "oss",
         "profile": "tech-news",
-        "max_items": 5
+        "max_items": 6
       },
       {
         "name": "GitHub Trending - Daily",
@@ -323,7 +323,7 @@
         "enabled": true,
         "category": "oss-trending",
         "profile": "oss-picks",
-        "max_items": 12,
+        "max_items": 20,
         "assume_recent": true
       },
       {
@@ -332,7 +332,7 @@
         "enabled": true,
         "category": "programming",
         "profile": "tech-news",
-        "max_items": 8
+        "max_items": 10
       },
       {
         "name": "Product Hunt",
@@ -348,7 +348,7 @@
         "enabled": true,
         "category": "infra",
         "profile": "tech-blog",
-        "max_items": 5
+        "max_items": 6
       },
       {
         "name": "Kubernetes Blog",
@@ -356,7 +356,7 @@
         "enabled": true,
         "category": "infra",
         "profile": "tech-blog",
-        "max_items": 5
+        "max_items": 6
       },
       {
         "name": "Rust Blog",
@@ -364,7 +364,7 @@
         "enabled": true,
         "category": "languages",
         "profile": "tech-news",
-        "max_items": 5
+        "max_items": 6
       },
       {
         "name": "Go Blog",
@@ -372,7 +372,7 @@
         "enabled": true,
         "category": "languages",
         "profile": "tech-news",
-        "max_items": 5
+        "max_items": 6
       },
       {
         "name": "Lobsters",
@@ -380,7 +380,7 @@
         "enabled": true,
         "category": "programming",
         "profile": "tech-news",
-        "max_items": 8
+        "max_items": 10
       },
       {
         "name": "Ars Technica",
@@ -388,7 +388,7 @@
         "enabled": true,
         "category": "tech",
         "profile": "tech-news",
-        "max_items": 8
+        "max_items": 10
       },
       {
         "name": "The Verge",
@@ -396,7 +396,7 @@
         "enabled": true,
         "category": "tech",
         "profile": "tech-news",
-        "max_items": 8
+        "max_items": 10
       },
       {
         "name": "MIT Technology Review",
@@ -404,7 +404,7 @@
         "enabled": true,
         "category": "tech",
         "profile": "tech-news",
-        "max_items": 5
+        "max_items": 6
       },
       {
         "name": "404 Media",
@@ -412,7 +412,7 @@
         "enabled": true,
         "category": "tech",
         "profile": "tech-news",
-        "max_items": 5
+        "max_items": 6
       },
       {
         "name": "量子位",
@@ -420,7 +420,7 @@
         "enabled": true,
         "category": "ai-news",
         "profile": "ai-models",
-        "max_items": 10
+        "max_items": 12
       },
       {
         "name": "Google News 中文 - 人工智能",
@@ -428,7 +428,7 @@
         "enabled": true,
         "category": "ai-news",
         "profile": "ai-models",
-        "max_items": 15
+        "max_items": 20
       },
       {
         "name": "少数派",
@@ -436,7 +436,7 @@
         "enabled": true,
         "category": "digital",
         "profile": "tech-news",
-        "max_items": 8
+        "max_items": 10
       },
       {
         "name": "阮一峰的网络日志",
@@ -444,7 +444,7 @@
         "enabled": true,
         "category": "programming",
         "profile": "tech-blog",
-        "max_items": 5
+        "max_items": 6
       },
       {
         "name": "Solidot",
@@ -460,7 +460,7 @@
         "enabled": true,
         "category": "software-engineering",
         "profile": "tech-news",
-        "max_items": 8
+        "max_items": 10
       },
       {
         "name": "CNBC Finance",
@@ -469,7 +469,7 @@
         "category": "finance",
         "profile": "finance-news",
         "content_extractor": "trafilatura",
-        "max_items": 8
+        "max_items": 12
       },
       {
         "name": "MarketWatch Top Stories",
@@ -477,7 +477,7 @@
         "enabled": true,
         "category": "finance",
         "profile": "finance-news",
-        "max_items": 8
+        "max_items": 12
       },
       {
         "name": "Financial Times",
@@ -485,7 +485,7 @@
         "enabled": true,
         "category": "finance",
         "profile": "finance-news",
-        "max_items": 8
+        "max_items": 12
       },
       {
         "name": "The Decoder",
@@ -493,7 +493,7 @@
         "enabled": true,
         "category": "ai-news",
         "profile": "ai-models",
-        "max_items": 8
+        "max_items": 10
       },
       {
         "name": "Techmeme",
@@ -501,7 +501,7 @@
         "enabled": true,
         "category": "tech",
         "profile": "tech-news",
-        "max_items": 10
+        "max_items": 12
       },
       {
         "name": "TLDR AI",
@@ -509,7 +509,7 @@
         "enabled": true,
         "category": "ai-news",
         "profile": "ai-models",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Last Week in AI",
@@ -517,7 +517,7 @@
         "enabled": true,
         "category": "ai-news",
         "profile": "ai-models",
-        "max_items": 3
+        "max_items": 4
       },
       {
         "name": "fal.ai Blog",
@@ -525,7 +525,7 @@
         "enabled": true,
         "category": "ai-media",
         "profile": "ai-models",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Together AI Blog",
@@ -533,7 +533,7 @@
         "enabled": true,
         "category": "ai-models",
         "profile": "ai-models",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Qwen Blog",
@@ -541,7 +541,7 @@
         "enabled": true,
         "category": "ai-models",
         "profile": "ai-models",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "ElevenLabs Blog",
@@ -549,7 +549,7 @@
         "enabled": true,
         "category": "ai-audio",
         "profile": "ai-models",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Stable Diffusion Art",
@@ -557,7 +557,7 @@
         "enabled": true,
         "category": "ai-image",
         "profile": "ai-models",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "NVIDIA Blog",
@@ -565,7 +565,7 @@
         "enabled": true,
         "category": "ai-hardware",
         "profile": "ai-models",
-        "max_items": 8
+        "max_items": 10
       },
       {
         "name": "Google Research",
@@ -573,7 +573,7 @@
         "enabled": true,
         "category": "ai-research",
         "profile": "tech-blog",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Amazon Science",
@@ -581,7 +581,7 @@
         "enabled": true,
         "category": "ai-research",
         "profile": "tech-blog",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "AI Business",
@@ -589,7 +589,7 @@
         "enabled": true,
         "category": "ai-news",
         "profile": "ai-models",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Interconnects",
@@ -597,7 +597,7 @@
         "enabled": true,
         "category": "ai-analysis",
         "profile": "ai-models",
-        "max_items": 3
+        "max_items": 4
       },
       {
         "name": "One Useful Thing",
@@ -605,7 +605,7 @@
         "enabled": true,
         "category": "ai-analysis",
         "profile": "ai-models",
-        "max_items": 3
+        "max_items": 4
       },
       {
         "name": "Latent Space",
@@ -613,7 +613,7 @@
         "enabled": true,
         "category": "ai-analysis",
         "profile": "ai-models",
-        "max_items": 3
+        "max_items": 4
       },
       {
         "name": "BBC World",
@@ -621,7 +621,7 @@
         "enabled": true,
         "category": "world",
         "profile": "world-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "Guardian World",
@@ -629,7 +629,7 @@
         "enabled": true,
         "category": "world",
         "profile": "world-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "Al Jazeera",
@@ -637,7 +637,7 @@
         "enabled": true,
         "category": "world",
         "profile": "world-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "DW English",
@@ -645,7 +645,7 @@
         "enabled": true,
         "category": "world",
         "profile": "world-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "France 24",
@@ -653,7 +653,7 @@
         "enabled": true,
         "category": "world",
         "profile": "world-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "NPR News",
@@ -661,7 +661,7 @@
         "enabled": true,
         "category": "world",
         "profile": "world-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "NYT World",
@@ -669,7 +669,7 @@
         "enabled": true,
         "category": "world",
         "profile": "world-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "BBC 中文",
@@ -677,7 +677,7 @@
         "enabled": true,
         "category": "world",
         "profile": "world-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "纽约时报中文网",
@@ -685,7 +685,7 @@
         "enabled": true,
         "category": "world",
         "profile": "world-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "法广中文",
@@ -693,7 +693,7 @@
         "enabled": true,
         "category": "world",
         "profile": "world-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "德国之声中文",
@@ -701,7 +701,7 @@
         "enabled": true,
         "category": "world",
         "profile": "world-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "界面新闻",
@@ -709,7 +709,7 @@
         "enabled": true,
         "category": "world",
         "profile": "world-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "澎湃新闻",
@@ -717,7 +717,7 @@
         "enabled": true,
         "category": "world",
         "profile": "world-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "BBC Politics",
@@ -725,7 +725,7 @@
         "enabled": true,
         "category": "politics",
         "profile": "politics-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "Guardian Politics",
@@ -733,7 +733,7 @@
         "enabled": true,
         "category": "politics",
         "profile": "politics-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "NYT Politics",
@@ -741,7 +741,7 @@
         "enabled": true,
         "category": "politics",
         "profile": "politics-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "Politico",
@@ -749,7 +749,7 @@
         "enabled": true,
         "category": "politics",
         "profile": "politics-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "The Hill",
@@ -757,7 +757,7 @@
         "enabled": true,
         "category": "politics",
         "profile": "politics-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "Axios",
@@ -765,7 +765,7 @@
         "enabled": true,
         "category": "politics",
         "profile": "politics-news",
-        "max_items": 6
+        "max_items": 10
       },
       {
         "name": "Foreign Policy",
@@ -773,7 +773,7 @@
         "enabled": true,
         "category": "politics",
         "profile": "politics-news",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Economist International",
@@ -781,7 +781,7 @@
         "enabled": true,
         "category": "politics",
         "profile": "politics-news",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Nature",
@@ -789,7 +789,7 @@
         "enabled": true,
         "category": "science",
         "profile": "science-health",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Science News",
@@ -797,7 +797,7 @@
         "enabled": true,
         "category": "science",
         "profile": "science-health",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "STAT News",
@@ -805,7 +805,7 @@
         "enabled": true,
         "category": "health",
         "profile": "science-health",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "New Scientist",
@@ -813,7 +813,7 @@
         "enabled": true,
         "category": "science",
         "profile": "science-health",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "ScienceDaily",
@@ -821,7 +821,7 @@
         "enabled": true,
         "category": "science",
         "profile": "science-health",
-        "max_items": 4
+        "max_items": 8
       },
       {
         "name": "Quanta Magazine",
@@ -829,7 +829,7 @@
         "enabled": true,
         "category": "science",
         "profile": "science-health",
-        "max_items": 4
+        "max_items": 8
       },
       {
         "name": "WHO News",
@@ -837,7 +837,7 @@
         "enabled": true,
         "category": "health",
         "profile": "science-health",
-        "max_items": 4
+        "max_items": 8
       },
       {
         "name": "Variety",
@@ -845,7 +845,7 @@
         "enabled": true,
         "category": "culture",
         "profile": "culture-news",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Hollywood Reporter",
@@ -853,7 +853,7 @@
         "enabled": true,
         "category": "culture",
         "profile": "culture-news",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Pitchfork",
@@ -861,7 +861,7 @@
         "enabled": true,
         "category": "music",
         "profile": "culture-news",
-        "max_items": 4
+        "max_items": 8
       },
       {
         "name": "IGN",
@@ -869,7 +869,7 @@
         "enabled": true,
         "category": "gaming",
         "profile": "culture-news",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "BBC Entertainment",
@@ -877,7 +877,7 @@
         "enabled": true,
         "category": "culture",
         "profile": "culture-news",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Guardian Culture",
@@ -885,7 +885,7 @@
         "enabled": true,
         "category": "culture",
         "profile": "culture-news",
-        "max_items": 5
+        "max_items": 8
       },
       {
         "name": "Google News 中文 - AI 价格与订阅",
@@ -893,7 +893,7 @@
         "enabled": true,
         "category": "ai-pricing",
         "profile": "ai-models",
-        "max_items": 8
+        "max_items": 10
       },
       {
         "name": "Google News - AI Pricing",
@@ -901,7 +901,7 @@
         "enabled": true,
         "category": "ai-pricing",
         "profile": "ai-models",
-        "max_items": 8
+        "max_items": 10
       },
       {
         "name": "Show HN",
@@ -909,7 +909,111 @@
         "enabled": true,
         "category": "oss-picks",
         "profile": "oss-picks",
+        "max_items": 15
+      },
+      {
+        "name": "WSJ Markets",
+        "url": "https://feeds.a.dj.com/rss/RSSMarketsMain.xml",
+        "enabled": true,
+        "category": "finance",
+        "profile": "finance-news",
+        "max_items": 12
+      },
+      {
+        "name": "Economist Finance",
+        "url": "https://www.economist.com/finance-and-economics/rss.xml",
+        "enabled": true,
+        "category": "finance",
+        "profile": "finance-news",
         "max_items": 10
+      },
+      {
+        "name": "Investing.com",
+        "url": "https://www.investing.com/rss/news.rss",
+        "enabled": true,
+        "category": "finance",
+        "profile": "finance-news",
+        "max_items": 10
+      },
+      {
+        "name": "The Sequence",
+        "url": "https://thesequence.substack.com/feed",
+        "enabled": true,
+        "category": "ai-research",
+        "profile": "tech-blog",
+        "max_items": 8
+      },
+      {
+        "name": "Ahead of AI",
+        "url": "https://magazine.sebastianraschka.com/feed",
+        "enabled": true,
+        "category": "ai-research",
+        "profile": "tech-blog",
+        "max_items": 5
+      },
+      {
+        "name": "arXiv cs.AI",
+        "url": "https://rss.arxiv.org/rss/cs.AI",
+        "enabled": true,
+        "category": "ai-research",
+        "profile": "tech-blog",
+        "max_items": 10
+      },
+      {
+        "name": "arXiv cs.LG",
+        "url": "https://rss.arxiv.org/rss/cs.LG",
+        "enabled": true,
+        "category": "ai-research",
+        "profile": "tech-blog",
+        "max_items": 8
+      },
+      {
+        "name": "Google News 中文 - AI 新模型",
+        "url": "https://news.google.com/rss/search?q=AI%20%E6%96%B0%E6%A8%A1%E5%9E%8B%20%E5%8F%91%E5%B8%83%20OR%20%E5%A4%A7%E6%A8%A1%E5%9E%8B%20%E5%8F%91%E5%B8%83&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
+        "enabled": true,
+        "category": "ai-news",
+        "profile": "ai-models",
+        "max_items": 10
+      },
+      {
+        "name": "Google News - AI Model Release",
+        "url": "https://news.google.com/rss/search?q=new%20AI%20model%20release%20OR%20AI%20model%20launch&hl=en-US&gl=US&ceid=US:en",
+        "enabled": true,
+        "category": "ai-news",
+        "profile": "ai-models",
+        "max_items": 10
+      },
+      {
+        "name": "Seeking Alpha",
+        "url": "https://seekingalpha.com/market_currents.xml",
+        "enabled": true,
+        "category": "finance",
+        "profile": "finance-news",
+        "max_items": 8
+      },
+      {
+        "name": "Live Science",
+        "url": "https://www.livescience.com/feeds.xml",
+        "enabled": true,
+        "category": "science",
+        "profile": "science-health",
+        "max_items": 8
+      },
+      {
+        "name": "NASA News",
+        "url": "https://www.nasa.gov/news-release/feed/",
+        "enabled": true,
+        "category": "space",
+        "profile": "science-health",
+        "max_items": 8
+      },
+      {
+        "name": "New Atlas",
+        "url": "https://newatlas.com/index.rss",
+        "enabled": true,
+        "category": "science",
+        "profile": "science-health",
+        "max_items": 8
       }
     ],
     "reddit": {
@@ -1082,7 +1186,7 @@
     "time_window_hours": 24
   },
   "digest": {
-    "max_items": 32,
+    "max_items": 90,
     "profile_order": [
       "oss-picks",
       "ai-models",
@@ -1097,63 +1201,63 @@
     "category_groups": {
       "oss-picks": {
         "name": "开源项目推荐",
-        "limit": 3,
+        "limit": 10,
         "categories": [
           "oss-picks"
         ]
       },
       "ai-models": {
         "name": "AI 模型与产品",
-        "limit": 6,
+        "limit": 10,
         "categories": [
           "ai-models"
         ]
       },
       "tech": {
         "name": "科技",
-        "limit": 4,
+        "limit": 10,
         "categories": [
           "tech-news"
         ]
       },
       "tech-blog": {
         "name": "深度技术",
-        "limit": 3,
+        "limit": 10,
         "categories": [
           "tech-blog"
         ]
       },
       "finance": {
         "name": "财经",
-        "limit": 3,
+        "limit": 10,
         "categories": [
           "finance-news"
         ]
       },
       "world": {
         "name": "国际与社会",
-        "limit": 4,
+        "limit": 10,
         "categories": [
           "world-news"
         ]
       },
       "politics": {
         "name": "政治与政策",
-        "limit": 3,
+        "limit": 10,
         "categories": [
           "politics-news"
         ]
       },
       "science": {
         "name": "科学与健康",
-        "limit": 3,
+        "limit": 10,
         "categories": [
           "science-health"
         ]
       },
       "culture": {
         "name": "文化娱乐",
-        "limit": 2,
+        "limit": 10,
         "categories": [
           "culture-news"
         ]
