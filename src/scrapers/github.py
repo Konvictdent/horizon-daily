@@ -1,7 +1,8 @@
 """GitHub scraper implementation."""
 
 import os
-from datetime import datetime
+import re
+from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 import httpx
 
@@ -56,10 +57,80 @@ class GitHubScraper(BaseScraper):
                 await result.collect(source.username, self._fetch_user_events(source, since))
             elif source.type == "repo_releases" and source.owner and source.repo:
                 await result.collect(f"{source.owner}/{source.repo}", self._fetch_repo_releases(source, since))
+            elif source.type == "search" and source.query:
+                await result.collect(f"search:{source.query}", self._fetch_search_repos(source, since))
             else:
                 result.fail(source.username or source.repo or source.type, ValueError("Invalid GitHub source configuration"))
 
         return result
+
+    async def _fetch_search_repos(
+        self,
+        source: GitHubSourceConfig,
+        since: datetime,
+    ) -> List[ContentItem]:
+        """Fetch repositories from the GitHub search API.
+
+        ``{since}`` in the configured query is replaced with the YYYY-MM-DD
+        date of the collection window start, so a query such as
+        ``created:>={since} stars:>50`` finds newly created projects.
+        """
+        query = (source.query or "").replace("{since}", since.strftime("%Y-%m-%d"))
+        query = re.sub(
+            r"\{since_days_(\d+)\}",
+            lambda m: (since - timedelta(days=int(m.group(1)))).strftime("%Y-%m-%d"),
+            query,
+        )
+        params = {
+            "q": query,
+            "sort": source.sort,
+            "order": source.order,
+            "per_page": max(1, min(source.per_page, 100)),
+        }
+        response = await self.client.get(
+            f"{self.base_url}/search/repositories",
+            headers=self._get_headers(),
+            params=params,
+            follow_redirects=True,
+        )
+        response.raise_for_status()
+        payload = response.json()
+
+        items = []
+        for repo in payload.get("items", []):
+            created_at = datetime.fromisoformat(repo["created_at"].replace("Z", "+00:00"))
+            license_info = repo.get("license") or {}
+            topics = repo.get("topics") or []
+            content_lines = [
+                f"Description: {repo.get('description') or 'N/A'}",
+                f"Stars: {repo.get('stargazers_count', 0)}",
+                f"Language: {repo.get('language') or 'N/A'}",
+                f"License: {license_info.get('spdx_id') or license_info.get('name') or 'N/A'}",
+                f"Topics: {', '.join(topics) if topics else 'N/A'}",
+                f"Created: {repo.get('created_at')}",
+                f"Last push: {repo.get('pushed_at')}",
+            ]
+            if repo.get("homepage"):
+                content_lines.append(f"Homepage: {repo['homepage']}")
+            items.append(ContentItem(
+                id=self._generate_id("github", "search", str(repo["id"])),
+                source_type=SourceType.GITHUB,
+                title=repo["full_name"],
+                url=repo["html_url"],
+                content="\n".join(content_lines),
+                author=(repo.get("owner") or {}).get("login"),
+                published_at=datetime.now(timezone.utc),
+                profile=source.profile,
+                metadata={
+                    "repo": repo["full_name"],
+                    "stars": repo.get("stargazers_count", 0),
+                    "language": repo.get("language"),
+                    "license": license_info.get("spdx_id"),
+                    "category": source.category,
+                },
+            ))
+
+        return items
 
     async def _fetch_user_events(
         self,

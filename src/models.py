@@ -252,10 +252,14 @@ class AIConfig(BaseModel):
 class GitHubSourceConfig(BaseModel):
     """GitHub source configuration."""
 
-    type: str  # "user_events", "repo_releases", etc.
+    type: str  # "user_events", "repo_releases", "search"
     username: Optional[str] = None
     owner: Optional[str] = None
     repo: Optional[str] = None
+    query: Optional[str] = None
+    sort: str = "stars"
+    order: str = "desc"
+    per_page: int = 20
     enabled: bool = True
     category: Optional[str] = None
     profile: ProfileRoute = None
@@ -321,6 +325,7 @@ class RSSSourceConfig(BaseModel):
     category: Optional[str] = None
     content_extractor: Optional[str] = None
     max_items: Optional[int] = None
+    assume_recent: bool = False
     profile: ProfileRoute = None
 
 

@@ -51,6 +51,10 @@
       "culture-news": {
         "threshold": 6.0,
         "topic_dedup": false
+      },
+      "oss-picks": {
+        "threshold": 5.5,
+        "topic_dedup": true
       }
     }
   },
@@ -145,6 +149,26 @@
         "enabled": true,
         "category": "oss",
         "profile": "tech-news"
+      },
+      {
+        "type": "search",
+        "query": "created:>={since_days_7} stars:>50 fork:false archived:false",
+        "sort": "stars",
+        "order": "desc",
+        "per_page": 15,
+        "enabled": true,
+        "category": "oss-new",
+        "profile": "oss-picks"
+      },
+      {
+        "type": "search",
+        "query": "created:>={since_days_30} stars:>200 fork:false archived:false",
+        "sort": "stars",
+        "order": "desc",
+        "per_page": 15,
+        "enabled": true,
+        "category": "oss-new",
+        "profile": "oss-picks"
       }
     ],
     "hackernews": {
@@ -298,8 +322,9 @@
         "url": "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml",
         "enabled": true,
         "category": "oss-trending",
-        "profile": "tech-news",
-        "max_items": 12
+        "profile": "oss-picks",
+        "max_items": 12,
+        "assume_recent": true
       },
       {
         "name": "V2EX",
@@ -877,6 +902,14 @@
         "category": "ai-pricing",
         "profile": "ai-models",
         "max_items": 8
+      },
+      {
+        "name": "Show HN",
+        "url": "https://hnrss.org/show",
+        "enabled": true,
+        "category": "oss-picks",
+        "profile": "oss-picks",
+        "max_items": 10
       }
     ],
     "reddit": {
@@ -1023,7 +1056,7 @@
       "min_stars": 100,
       "max_items": 15,
       "category": "oss-trending",
-      "profile": "tech-news"
+      "profile": "oss-picks"
     },
     "gdelt": {
       "enabled": true,
@@ -1049,8 +1082,9 @@
     "time_window_hours": 24
   },
   "digest": {
-    "max_items": 30,
+    "max_items": 32,
     "profile_order": [
+      "oss-picks",
       "ai-models",
       "tech-news",
       "tech-blog",
@@ -1061,16 +1095,23 @@
       "culture-news"
     ],
     "category_groups": {
+      "oss-picks": {
+        "name": "开源项目推荐",
+        "limit": 3,
+        "categories": [
+          "oss-picks"
+        ]
+      },
       "ai-models": {
         "name": "AI 模型与产品",
-        "limit": 7,
+        "limit": 6,
         "categories": [
           "ai-models"
         ]
       },
       "tech": {
         "name": "科技",
-        "limit": 5,
+        "limit": 4,
         "categories": [
           "tech-news"
         ]
@@ -1091,28 +1132,28 @@
       },
       "world": {
         "name": "国际与社会",
-        "limit": 5,
+        "limit": 4,
         "categories": [
           "world-news"
         ]
       },
       "politics": {
         "name": "政治与政策",
-        "limit": 4,
+        "limit": 3,
         "categories": [
           "politics-news"
         ]
       },
       "science": {
         "name": "科学与健康",
-        "limit": 4,
+        "limit": 3,
         "categories": [
           "science-health"
         ]
       },
       "culture": {
         "name": "文化娱乐",
-        "limit": 3,
+        "limit": 2,
         "categories": [
           "culture-news"
         ]
