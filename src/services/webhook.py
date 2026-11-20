@@ -687,6 +687,13 @@ class WebhookNotifier:
         platform = (self.config.platform or "").lower()
         check_all = platform in ("", "generic")
 
+        if platform == "pushplus":
+            code = data.get("code")
+            if code is not None and code not in (0, 200):
+                msg = data.get("msg") or ""
+                return f"PushPlus error (code={code}): {msg}"
+            return None
+
         if platform in ("feishu", "lark") or check_all:
             code = data.get("code") or data.get("StatusCode")
             if code is not None and code != 0:
