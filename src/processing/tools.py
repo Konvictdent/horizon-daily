@@ -31,7 +31,13 @@ class WebSearchTool:
         if not isinstance(query, str) or not query.strip():
             raise ValueError("web_search requires a non-empty query")
         try:
-            raw = await asyncio.to_thread(DDGS().text, query.strip(), max_results=3)
+            raw = await asyncio.wait_for(
+                asyncio.to_thread(DDGS().text, query.strip(), max_results=3),
+                timeout=20.0,
+            )
+        except asyncio.TimeoutError:
+            logger.warning("web_search timed out for %r", query)
+            return []
         except Exception as exc:
             logger.warning("web_search failed for %r: %s", query, exc)
             return []
