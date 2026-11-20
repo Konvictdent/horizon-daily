@@ -1,9 +1,12 @@
 {
   "ai": {
-    "provider": "deepseek",
-    "model": "deepseek-chat",
-    "base_url": "https://api.deepseek.com",
-    "api_key_env": "DEEPSEEK_API_KEY",
+    "provider": "openai",
+    "model": "deepseek-v4.1-flash",
+    "base_url": "https://opencode.ai/zen/go/v1",
+    "api_key_env": "OPENCODE_GO_API_KEY",
+    "headers": {
+      "x-opencode-session": "horizon-daily-briefing"
+    },
     "temperature": 0.3,
     "max_tokens": 8192,
     "throttle_sec": 1,

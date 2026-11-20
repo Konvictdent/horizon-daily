@@ -200,6 +200,7 @@ class AIConfig(BaseModel):
     api_key_env: str
     chatgpt_account: Optional[str] = None
     extra_body: Optional[Dict[str, Any]] = None
+    headers: Optional[Dict[str, str]] = None
     temperature: float = 0.3
     max_tokens: int = 4096
     throttle_sec: float = 0.0
