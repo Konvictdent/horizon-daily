@@ -188,6 +188,11 @@ class RSSScraper(BaseScraper):
                 result.failures[label] = error
                 logger.warning("Skipping RSS entry %s: %s", label, error)
 
+        # Keep only the newest N entries when a per-feed cap is configured.
+        if source.max_items:
+            result.items.sort(key=lambda item: item.published_at, reverse=True)
+            result.items = result.items[: source.max_items]
+
         # A feed with only rejected entries is not a successful empty response.
         result.successful = int(bool(result.items) or not result.failures)
         return result

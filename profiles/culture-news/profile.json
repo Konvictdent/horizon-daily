@@ -1,0 +1,36 @@
+{
+  "id": "culture-news",
+  "name": "Culture & Entertainment",
+  "display_names": {
+    "zh": "文化娱乐"
+  },
+  "match": "match.md",
+  "analysis": "analysis.md",
+  "content": {
+    "analysis_max_chars": 2500,
+    "enrichment_max_chars": 6000,
+    "sampling": "head-middle-tail"
+  },
+  "enrichment": {
+    "prompt": "enrichment.md",
+    "blocks": [
+      {
+        "id": "summary",
+        "type": "section",
+        "tools": [],
+        "primary": true
+      },
+      {
+        "id": "context",
+        "type": "section",
+        "tools": []
+      },
+      {
+        "id": "impact",
+        "type": "section",
+        "tools": [],
+        "optional": true
+      }
+    ]
+  }
+}

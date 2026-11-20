@@ -1,0 +1,41 @@
+{
+  "id": "politics-news",
+  "name": "Politics & Policy",
+  "display_names": {
+    "zh": "政治与政策"
+  },
+  "match": "match.md",
+  "analysis": "analysis.md",
+  "content": {
+    "analysis_max_chars": 3000,
+    "enrichment_max_chars": 8000,
+    "sampling": "head-middle-tail"
+  },
+  "enrichment": {
+    "prompt": "enrichment.md",
+    "blocks": [
+      {
+        "id": "summary",
+        "type": "section",
+        "tools": [],
+        "primary": true
+      },
+      {
+        "id": "policy_context",
+        "type": "section",
+        "tools": []
+      },
+      {
+        "id": "impact",
+        "type": "section",
+        "tools": []
+      },
+      {
+        "id": "caveat",
+        "type": "section",
+        "tools": [],
+        "optional": true
+      }
+    ]
+  }
+}

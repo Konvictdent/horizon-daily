@@ -1,0 +1,42 @@
+{
+  "id": "ai-models",
+  "name": "AI Models & Products",
+  "display_names": {
+    "zh": "AI 模型与产品"
+  },
+  "match": "match.md",
+  "analysis": "analysis.md",
+  "content": {
+    "analysis_max_chars": 6000,
+    "enrichment_max_chars": 12000,
+    "sampling": "head-middle-tail"
+  },
+  "enrichment": {
+    "prompt": "enrichment.md",
+    "blocks": [
+      {
+        "id": "summary",
+        "type": "section",
+        "tools": [],
+        "primary": true
+      },
+      {
+        "id": "competitive_context",
+        "type": "section",
+        "tools": []
+      },
+      {
+        "id": "pricing_access",
+        "type": "section",
+        "tools": [],
+        "optional": true
+      },
+      {
+        "id": "caveat",
+        "type": "section",
+        "tools": [],
+        "optional": true
+      }
+    ]
+  }
+}
