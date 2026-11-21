@@ -109,12 +109,6 @@ jobs:
           systemctl list-timers horizon-daily.timer --no-pager
           REMOTE
 
-      - name: Record gh-pages head
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          echo "PAGES_BEFORE=$(gh api repos/Konvictdent/horizon-daily/branches/gh-pages --jq .commit.sha)" >> "$GITHUB_ENV"
-
       - name: Smoke run on VPS
         if: inputs.mode == 'deploy'
         run: |
@@ -141,19 +135,21 @@ jobs:
           ssh $SSHOPTS root@"$VPS_HOST" 'PUBLISH_ONLY=1 /opt/horizon/scripts/daily-run.sh'
 
       - name: Verify web digest
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          pages_after=$(gh api repos/Konvictdent/horizon-daily/branches/gh-pages --jq .commit.sha)
-          echo "pages_before=$PAGES_BEFORE"
-          echo "pages_after=$pages_after"
-          test "$PAGES_BEFORE" != "$pages_after"
           today=$(TZ=Asia/Shanghai date +%F)
           echo "today=$today"
           ok=0
           for i in $(seq 1 20); do
-            if curl -fsSL https://konvictdent.github.io/horizon-daily/ | grep -q "$today"; then ok=1; break; fi
+            latest=$(curl -fsSL https://konvictdent.github.io/horizon-daily/latest.html || true)
+            if echo "$latest" | grep -q "$today"; then
+              post_path=$(echo "$latest" | grep -o 'url=/horizon-daily/[^"]*' | head -1 | cut -d= -f2-)
+              echo "post_path=$post_path"
+              if [ -n "$post_path" ] && curl -fsSL "https://konvictdent.github.io${post_path}" | grep -q "$today"; then
+                ok=1
+                break
+              fi
+            fi
             sleep 15
           done
           echo "pages_ok=$ok"
