@@ -1,0 +1,24 @@
+---
+layout: null
+---
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  {% assign latest_zh = site.posts | where: "lang", "zh" | first %}
+  {% if latest_zh %}
+  <meta http-equiv="refresh" content="0; url={{ latest_zh.url | relative_url }}">
+  <link rel="canonical" href="{{ latest_zh.url | relative_url }}">
+  {% else %}
+  <meta http-equiv="refresh" content="0; url={{ '/' | relative_url }}">
+  {% endif %}
+  <title>Horizon 最新日报</title>
+</head>
+<body>
+  {% if latest_zh %}
+  <p>正在打开最新日报… <a href="{{ latest_zh.url | relative_url }}">如果未自动跳转，请点击这里</a></p>
+  {% else %}
+  <p>暂无日报。<a href="{{ '/' | relative_url }}">返回首页</a></p>
+  {% endif %}
+</body>
+</html>

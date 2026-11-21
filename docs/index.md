@@ -9,6 +9,11 @@ title: Home
 
 欢迎来到 [Horizon](https://github.com/thysrael/Horizon)，一个 AI 驱动的信息聚合系统。
 
+{% assign latest_zh = site.posts | where: "lang", "zh" | first %}
+{% if latest_zh %}
+> 📖 **[阅读最新日报（{{ latest_zh.date | date: "%Y-%m-%d" }}）]({{ latest_zh.url | relative_url }})**
+{% endif %}
+
 ## 文档
 
 - [配置指南](configuration) — AI 提供商、信息源、过滤规则与环境变量替换
@@ -33,6 +38,11 @@ title: Home
 <div id="lang-en" class="lang-section" markdown="1">
 
 Welcome to [Horizon](https://github.com/thysrael/Horizon), an AI-driven information aggregation system.
+
+{% assign latest_en = site.posts | where: "lang", "en" | first %}
+{% if latest_en %}
+> 📖 **[Read the latest digest ({{ latest_en.date | date: "%Y-%m-%d" }})]({{ latest_en.url | relative_url }})**
+{% endif %}
 
 ## Documentation
 
