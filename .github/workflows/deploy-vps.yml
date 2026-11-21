@@ -74,7 +74,8 @@ jobs:
           if [ -d /opt/horizon/.git ]; then
             cd /opt/horizon
             git remote set-url origin git@github.com:Konvictdent/horizon-daily.git
-            git fetch origin main
+            GIT_SSH_COMMAND="ssh -i /root/.ssh/horizon_deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new" \
+              git fetch origin main
             git reset --hard origin/main
           else
             GIT_SSH_COMMAND="ssh -i /root/.ssh/horizon_deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new" \
