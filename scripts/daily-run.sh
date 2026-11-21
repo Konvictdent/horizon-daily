@@ -57,7 +57,11 @@ cp -r docs/* "$TMPDIR/"
 
 cd "$TMPDIR"
 git add -A
-git commit -m "Daily Summary: $(date '+%Y-%m-%d')" || { echo "$LOG_PREFIX Nothing to commit."; exit 0; }
+if git diff --cached --quiet; then
+    echo "$LOG_PREFIX Nothing to commit."
+    exit 0
+fi
+git commit -m "Daily Summary: $(date '+%Y-%m-%d')"
 retry git push origin HEAD:gh-pages
 
 echo "$LOG_PREFIX Done."
