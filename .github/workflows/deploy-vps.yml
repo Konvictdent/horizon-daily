@@ -95,6 +95,7 @@ jobs:
           rm -f /tmp/horizon.env
           git config user.name "Horizon VPS"
           git config user.email "horizon@localhost"
+          chmod +x scripts/daily-run.sh
           cp data/config.github.json data/config.json
           mkdir -p logs
 
