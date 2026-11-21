@@ -135,22 +135,20 @@ jobs:
           ssh $SSHOPTS root@"$VPS_HOST" 'PUBLISH_ONLY=1 /opt/horizon/scripts/daily-run.sh'
 
       - name: Verify web digest
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           today=$(TZ=Asia/Shanghai date +%F)
           echo "today=$today"
-          ok=0
-          for i in $(seq 1 20); do
-            latest=$(curl -fsSL https://konvictdent.github.io/horizon-daily/latest.html || true)
-            if echo "$latest" | grep -q "$today"; then
-              post_path=$(echo "$latest" | grep -o 'url=/horizon-daily/[^"]*' | head -1 | cut -d= -f2-)
-              echo "post_path=$post_path"
-              if [ -n "$post_path" ] && curl -fsSL "https://konvictdent.github.io${post_path}" | grep -q "$today"; then
-                ok=1
-                break
-              fi
-            fi
-            sleep 15
-          done
-          echo "pages_ok=$ok"
-          test "$ok" = "1"
+          latest_sha=$(gh api "repos/Konvictdent/horizon-daily/contents/latest.html?ref=gh-pages" --jq .sha)
+          post_sha=$(gh api "repos/Konvictdent/horizon-daily/contents/_posts/${today}-summary-zh.md?ref=gh-pages" --jq .sha)
+          echo "latest_sha=$latest_sha"
+          echo "post_sha=$post_sha"
+          test -n "$latest_sha"
+          test -n "$post_sha"
+          build_status=$(gh api repos/Konvictdent/horizon-daily/pages/builds/latest --jq .status)
+          echo "pages_build=$build_status"
+          test "$build_status" = "built"
+          live_code=$(curl --ipv4 -sS -o /dev/null -w '%{http_code}' "https://konvictdent.github.io/horizon-daily/latest.html?ts=$(date +%s)" || true)
+          echo "live_latest_http=$live_code"
