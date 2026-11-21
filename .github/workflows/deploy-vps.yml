@@ -1,0 +1,128 @@
+name: Deploy Horizon VPS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-horizon-vps
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+      HORIZON_DEPLOY_KEY: ${{ secrets.HORIZON_DEPLOY_KEY }}
+      OPENCODE_GO_API_KEY: ${{ secrets.OPENCODE_GO_API_KEY }}
+      PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+
+    steps:
+      - name: Prepare SSH keys
+        run: |
+          set -euo pipefail
+          umask 077
+          printf '%s\n' "$VPS_SSH_KEY" > /tmp/vps_key
+          printf '%s\n' "$HORIZON_DEPLOY_KEY" > /tmp/horizon_key
+          chmod 600 /tmp/vps_key /tmp/horizon_key
+
+      - name: Write runtime env
+        run: |
+          set -euo pipefail
+          umask 077
+          cat > /tmp/horizon.env <<EOF
+          OPENCODE_GO_API_KEY=${OPENCODE_GO_API_KEY}
+          PUSHPLUS_TOKEN=${PUSHPLUS_TOKEN}
+          HORIZON_WEBHOOK_URL=https://www.pushplus.plus/send
+          TZ=Asia/Shanghai
+          EOF
+          chmod 600 /tmp/horizon.env
+
+      - name: Install on VPS
+        run: |
+          set -euo pipefail
+          SSHOPTS="-i /tmp/vps_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=20"
+          scp $SSHOPTS /tmp/horizon.env /tmp/horizon_key root@"$VPS_HOST":/tmp/
+          ssh $SSHOPTS root@"$VPS_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          export DEBIAN_FRONTEND=noninteractive
+
+          if command -v apt-get >/dev/null; then
+            apt-get update -y
+            apt-get install -y git curl ca-certificates python3
+          elif command -v dnf >/dev/null; then
+            dnf install -y git curl ca-certificates python3
+          fi
+
+          if [ ! -x /root/.local/bin/uv ]; then
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+          fi
+          /root/.local/bin/uv --version
+
+          install -d -m 700 /root/.ssh
+          install -m 600 /tmp/horizon_key /root/.ssh/horizon_deploy
+          rm -f /tmp/horizon_key
+          ssh-keyscan -t ed25519 github.com >> /root/.ssh/known_hosts 2>/dev/null || true
+          chmod 600 /root/.ssh/known_hosts
+
+          timedatectl set-timezone Asia/Shanghai || true
+
+          if [ -d /opt/horizon/.git ]; then
+            cd /opt/horizon
+            git remote set-url origin git@github.com:Konvictdent/horizon-daily.git
+            git fetch origin main
+            git reset --hard origin/main
+          else
+            GIT_SSH_COMMAND="ssh -i /root/.ssh/horizon_deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new" \
+              git clone git@github.com:Konvictdent/horizon-daily.git /opt/horizon
+            cd /opt/horizon
+          fi
+
+          install -m 600 /tmp/horizon.env .env
+          rm -f /tmp/horizon.env
+          cp data/config.github.json data/config.json
+          mkdir -p logs
+
+          /root/.local/bin/uv python install 3.12
+          /root/.local/bin/uv sync --frozen --python 3.12
+
+          install -m 644 deploy/vps/horizon-daily.service /etc/systemd/system/horizon-daily.service
+          install -m 644 deploy/vps/horizon-daily.timer /etc/systemd/system/horizon-daily.timer
+          systemctl daemon-reload
+          systemctl enable --now horizon-daily.timer
+          systemctl list-timers horizon-daily.timer --no-pager
+          REMOTE
+
+      - name: Smoke run on VPS
+        run: |
+          set -euo pipefail
+          SSHOPTS="-i /tmp/vps_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=20"
+          ssh $SSHOPTS root@"$VPS_HOST" 'systemctl start --no-block horizon-daily.service'
+          state=activating
+          for i in $(seq 1 180); do
+            state=$(ssh $SSHOPTS root@"$VPS_HOST" 'systemctl is-active horizon-daily.service' 2>/dev/null || true)
+            echo "state=$state ($i)"
+            if [ "$state" != "activating" ] && [ "$state" != "active" ]; then break; fi
+            sleep 30
+          done
+          ssh $SSHOPTS root@"$VPS_HOST" 'systemctl show horizon-daily.service -p ActiveState -p SubState -p Result; journalctl -u horizon-daily.service -n 120 --no-pager'
+          result=$(ssh $SSHOPTS root@"$VPS_HOST" 'systemctl show horizon-daily.service -p Result --value')
+          echo "result=$result"
+          test "$result" = "success"
+
+      - name: Verify web digest
+        run: |
+          set -euo pipefail
+          today=$(TZ=Asia/Shanghai date +%F)
+          echo "today=$today"
+          ok=0
+          for i in $(seq 1 20); do
+            if curl -fsSL https://konvictdent.github.io/horizon-daily/ | grep -q "$today"; then ok=1; break; fi
+            sleep 15
+          done
+          echo "pages_ok=$ok"
+          test "$ok" = "1"

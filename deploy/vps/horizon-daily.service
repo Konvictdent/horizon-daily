@@ -1,0 +1,18 @@
+[Unit]
+Description=Horizon daily briefing
+Documentation=https://github.com/Konvictdent/horizon-daily
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/horizon
+EnvironmentFile=/opt/horizon/.env
+Environment=HOME=/root
+Environment=PATH=/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=TZ=Asia/Shanghai
+Environment=GIT_SSH_COMMAND=ssh -i /root/.ssh/horizon_deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new
+ExecStart=/opt/horizon/scripts/daily-run.sh
+TimeoutStartSec=5400
+Nice=10

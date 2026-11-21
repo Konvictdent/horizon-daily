@@ -224,7 +224,7 @@ def main() -> None:
     parser.add_argument(
         "--delivery",
         default=None,
-        choices=["summary", "summary_and_items"],
+        choices=["summary", "summary_and_items", "brief"],
         help="Override the delivery mode from config for this test.",
     )
     add_data_dir_arguments(parser)

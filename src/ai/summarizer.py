@@ -319,8 +319,57 @@ class DailySummarizer:
 
         return normalize_language(header + "\n\n".join(sections), language)
 
-    def generate_webhook_item(
+    def generate_brief(
         self,
+        items: List[ContentItem],
+        date: str,
+        total_fetched: int,
+        language: str = "en",
+        limit_per_group: int = 3,
+    ) -> str:
+        """Generate a compact push-only brief with the top titles per group.
+
+        The full analysis, summaries and source links stay in the web digest;
+        this is intentionally short enough to read inside a phone notification.
+        """
+        labels = LABELS.get(language, LABELS["en"])
+        if not items:
+            return self._generate_empty_summary(date, total_fetched, labels)
+
+        if language == "zh":
+            header = (
+                f"# Horizon 每日简报 - {date}\n\n"
+                f"> 从 {total_fetched} 条内容中精选 {len(items)} 条，"
+                f"以下是各板块 TOP {limit_per_group}。\n\n"
+            )
+        else:
+            header = (
+                f"# Horizon Daily Brief - {date}\n\n"
+                f"> Selected {len(items)} items from {total_fetched}; "
+                f"top {limit_per_group} per section below.\n\n"
+            )
+
+        sections = []
+        view = self.build_view(items, language)
+        for group in view.groups:
+            profile_name = _escape_markdown(group.name)
+            if language == "zh":
+                profile_name = _pangu(profile_name)
+            entries = [f"**{profile_name}**"]
+            for view_item in group.items[:limit_per_group]:
+                title = _escape_markdown(view_item.title)
+                if language == "zh":
+                    title = _pangu(title)
+                url = _safe_url(view_item.item.url)
+                title_link = f"[{title}]({url})" if url else title
+                entries.append(f"{view_item.index}. {title_link} · {view_item.score}/10")
+            if len(group.items) > limit_per_group:
+                entries.append(f"… 还有 {len(group.items) - limit_per_group} 条")
+            sections.append("\n".join(entries))
+
+        return normalize_language(header + "\n\n".join(sections), language)
+
+    def generate_webhook_item(        self,
         item: ContentItem,
         language: str,
         index: int,

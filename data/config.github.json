@@ -1270,7 +1270,7 @@
   "webhook": {
     "enabled": true,
     "url_env": "HORIZON_WEBHOOK_URL",
-    "delivery": "summary",
+    "delivery": "brief",
     "overview_position": "first",
     "platform": "pushplus",
     "layout": "markdown",
@@ -1281,7 +1281,7 @@
     "request_body": {
       "token": "${PUSHPLUS_TOKEN}",
       "title": "#{message_title}",
-      "content": "#{summary?limit=24000&split=---}\n\n---\n\n[阅读完整日报](https://konvictdent.github.io/horizon-daily/)",
+      "content": "#{summary}\n\n---\n\n[阅读网页版完整日报](https://konvictdent.github.io/horizon-daily/)",
       "template": "markdown"
     },
     "headers": ""

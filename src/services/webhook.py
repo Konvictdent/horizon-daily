@@ -505,6 +505,25 @@ class WebhookNotifier:
             ]
 
         delivery = getattr(self.config, "delivery", "summary")
+        if delivery == "brief":
+            brief = summarizer.generate_brief(
+                important_items,
+                date,
+                all_items_count,
+                language=lang,
+            )
+            return [
+                {
+                    **base_vars,
+                    "message_title": (
+                        f"Horizon {date} 简报"
+                        if lang == "zh"
+                        else f"Horizon {date} Brief"
+                    ),
+                    "message_kind": "brief",
+                    "summary": brief,
+                }
+            ]
         if delivery == "summary_and_items":
             item_messages: List[dict[str, Any]] = []
             overview = summarizer.generate_webhook_overview(

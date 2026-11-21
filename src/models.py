@@ -531,7 +531,7 @@ class WebhookConfig(BaseModel):
         None  # POST body: real JSON object or string with #{key} placeholders; if empty, will use GET
     )
     headers: Optional[str] = None  # Custom headers, "Key: Value" per line
-    delivery: Literal["summary", "summary_and_items"] = "summary"
+    delivery: Literal["summary", "summary_and_items", "brief"] = "summary"
     overview_position: Literal["first", "last"] = "first"
     platform: Literal["generic", "feishu", "lark", "dingtalk", "slack", "discord", "pushplus"] = "generic"
     layout: Literal["markdown", "collapsible"] = "markdown"

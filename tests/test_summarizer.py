@@ -77,6 +77,26 @@ def test_generate_webhook_overview_lists_items_without_full_details():
     assert "Summary for item 1." not in result
 
 
+def test_generate_brief_limits_each_group_and_keeps_links():
+    summarizer = DailySummarizer()
+    items = [_make_item(i) for i in range(1, 6)]
+
+    result = summarizer.generate_brief(
+        items,
+        date="2026-04-25",
+        total_fetched=20,
+        language="zh",
+        limit_per_group=3,
+    )
+
+    assert "Horizon 每日简报 - 2026-04-25" in result
+    assert "从 20 条内容中精选 5 条" in result
+    assert "1. [Important Item 1](https://example.com/items/1)" in result
+    assert "3. [Important Item 3](https://example.com/items/3)" in result
+    assert "Important Item 4" not in result
+    assert "还有 2 条" in result
+
+
 def test_generate_webhook_item_renders_single_item_detail():
     summarizer = DailySummarizer()
 
