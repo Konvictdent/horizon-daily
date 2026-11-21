@@ -2,6 +2,14 @@ name: Deploy Horizon VPS
 
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "deploy = install + smoke run; publish-only = install + publish existing docs"
+        type: choice
+        options:
+          - deploy
+          - publish-only
+        default: deploy
 
 permissions:
   contents: read
@@ -107,6 +115,7 @@ jobs:
           echo "PAGES_BEFORE=$(gh api repos/Konvictdent/horizon-daily/branches/gh-pages --jq .commit.sha)" >> "$GITHUB_ENV"
 
       - name: Smoke run on VPS
+        if: inputs.mode == 'deploy'
         run: |
           set -euo pipefail
           SSHOPTS="-i /tmp/vps_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=20"
@@ -122,6 +131,13 @@ jobs:
           result=$(ssh $SSHOPTS root@"$VPS_HOST" 'systemctl show horizon-daily.service -p Result --value')
           echo "result=$result"
           test "$result" = "success"
+
+      - name: Publish existing docs
+        if: inputs.mode == 'publish-only'
+        run: |
+          set -euo pipefail
+          SSHOPTS="-i /tmp/vps_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=20"
+          ssh $SSHOPTS root@"$VPS_HOST" 'PUBLISH_ONLY=1 /opt/horizon/scripts/daily-run.sh'
 
       - name: Verify web digest
         env:

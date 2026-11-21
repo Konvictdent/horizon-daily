@@ -25,18 +25,23 @@ retry() {
 
 cd "$PROJECT_DIR"
 
-echo "$LOG_PREFIX Starting Horizon daily run..."
+# Use the repo-scoped deploy key for both manual and systemd runs.
+export GIT_SSH_COMMAND="${GIT_SSH_COMMAND:-ssh -i /root/.ssh/horizon_deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new}"
 
-# 1. Discard server-generated lockfile changes, then update to the latest main
-retry git fetch --quiet origin main
-git restore --source=HEAD -- uv.lock
-git merge --ff-only origin/main
+echo "$LOG_PREFIX Starting Horizon daily run (PUBLISH_ONLY=${PUBLISH_ONLY:-0})..."
 
-# 2. Install/update dependencies using the committed lockfile
-uv sync --locked --quiet
+if [ "${PUBLISH_ONLY:-0}" != "1" ]; then
+    # 1. Discard server-generated lockfile changes, then update to the latest main
+    retry git fetch --quiet origin main
+    git restore --source=HEAD -- uv.lock
+    git merge --ff-only origin/main
 
-# 3. Run Horizon
-uv run --locked horizon --hours 24
+    # 2. Install/update dependencies using the committed lockfile
+    uv sync --locked --quiet
+
+    # 3. Run Horizon
+    uv run --locked horizon --hours 24
+fi
 
 # 4. Deploy docs to gh-pages
 echo "$LOG_PREFIX Deploying to gh-pages..."
