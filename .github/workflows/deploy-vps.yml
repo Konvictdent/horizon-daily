@@ -85,6 +85,8 @@ jobs:
 
           install -m 600 /tmp/horizon.env .env
           rm -f /tmp/horizon.env
+          git config user.name "Horizon VPS"
+          git config user.email "horizon@localhost"
           cp data/config.github.json data/config.json
           mkdir -p logs
 
@@ -97,6 +99,12 @@ jobs:
           systemctl enable --now horizon-daily.timer
           systemctl list-timers horizon-daily.timer --no-pager
           REMOTE
+
+      - name: Record gh-pages head
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "PAGES_BEFORE=$(gh api repos/Konvictdent/horizon-daily/branches/gh-pages --jq .commit.sha)" >> "$GITHUB_ENV"
 
       - name: Smoke run on VPS
         run: |
@@ -116,8 +124,14 @@ jobs:
           test "$result" = "success"
 
       - name: Verify web digest
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          pages_after=$(gh api repos/Konvictdent/horizon-daily/branches/gh-pages --jq .commit.sha)
+          echo "pages_before=$PAGES_BEFORE"
+          echo "pages_after=$pages_after"
+          test "$PAGES_BEFORE" != "$pages_after"
           today=$(TZ=Asia/Shanghai date +%F)
           echo "today=$today"
           ok=0
