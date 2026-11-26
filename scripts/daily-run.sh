@@ -58,12 +58,16 @@ git worktree prune
 retry git fetch --quiet origin gh-pages
 
 git worktree add --detach "$TMPDIR" origin/gh-pages
-if command -v rsync >/dev/null 2>&1; then
-    rsync -a --delete --exclude=.git docs/ "$TMPDIR/"
-else
-    find "$TMPDIR" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-    cp -r docs/* "$TMPDIR/"
-fi
+cp -r docs/* "$TMPDIR/"
+# Remove stale posts that were renamed/deleted in docs, but keep generated
+# artifacts that live only on gh-pages (feeds, downloads, historical posts).
+for post in "$TMPDIR"/_posts/*.md; do
+    [ -e "$post" ] || continue
+    name=$(basename "$post")
+    if [ ! -f "docs/_posts/$name" ]; then
+        rm -f "$post"
+    fi
+done
 
 cd "$TMPDIR"
 git add -A
