@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from enum import Enum
 import re
 from typing import Annotated, Literal, Optional, List, Dict, Any, NamedTuple, Union
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from pydantic import BaseModel, ConfigDict, HttpUrl, Field, field_validator, model_validator
 
 
@@ -594,6 +595,16 @@ class ProcessingConfig(BaseModel):
     profiles_dir: str = "profiles"
     default_profile: str = "tech-news"
     profile_settings: Dict[str, ProfileSettingsConfig] = Field(default_factory=dict)
+    # Exclude items already published in the last N daily digests before the
+    # expensive analysis pass. Zero keeps the historical unfiltered behavior.
+    cross_day_dedup_days: int = Field(default=0, ge=0, le=365)
+
+    @field_validator("cross_day_dedup_days", mode="before")
+    @classmethod
+    def reject_boolean_cross_day_dedup(cls, value: Any) -> Any:
+        if isinstance(value, bool):
+            raise ValueError("cross_day_dedup_days must be an integer, not a boolean")
+        return value
 
 
 class DisplayConfig(BaseModel):
@@ -612,6 +623,9 @@ class CollectionConfig(BaseModel):
     # Positivity is collection_hours(), applied once before a run. This field
     # stores the configured number and does not check it again.
     time_window_hours: int = 24
+    # Calendar date used for summary filenames, Jekyll posts and notifications.
+    # The collection window itself stays an absolute UTC duration.
+    digest_timezone: str = "UTC"
 
     @field_validator("time_window_hours", mode="before")
     @classmethod
@@ -620,6 +634,18 @@ class CollectionConfig(BaseModel):
         # collection_hours() can only see the coerced integer.
         if isinstance(value, bool):
             raise ValueError("time_window_hours must be an integer, not a boolean")
+        return value
+
+    @field_validator("digest_timezone")
+    @classmethod
+    def validate_digest_timezone(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("digest_timezone must not be empty")
+        try:
+            ZoneInfo(value)
+        except ZoneInfoNotFoundError as exc:
+            raise ValueError(f"unknown digest_timezone: {value}") from exc
         return value
 
 

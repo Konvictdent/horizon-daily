@@ -45,6 +45,40 @@ def _url_key(url: str) -> str:
     return urldefrag(url)[0].rstrip("/")
 
 
+def digest_url_key(url: str) -> str:
+    """Public URL normalization for cross-day digest deduplication."""
+    return _url_key(url)
+
+
+def digest_title_key(title: str) -> str:
+    """Normalize a title so punctuation/case changes still compare equal."""
+    return re.sub(r"[^\w\u3400-\u9fff]+", "", _plain_text(title).casefold())
+
+
+def recent_digest_keys(
+    directory: Path, *, days: int, before: date
+) -> tuple[set[str], set[str]]:
+    """Return URLs and titles published in the recent digest window.
+
+    ``before`` is exclusive, so a rerun on the same digest date does not
+    filter against its own already-written summary.
+    """
+    if days <= 0:
+        return set(), set()
+    since = before - timedelta(days=days)
+    entries = _read_entries(directory)
+    selected = [
+        entry for entry in entries if since <= entry.digest_date < before
+    ]
+    urls = {_url_key(entry.url) for entry in selected}
+    titles = {
+        key
+        for entry in selected
+        if (key := digest_title_key(entry.title))
+    }
+    return urls, titles
+
+
 @dataclass(frozen=True)
 class HistoryEntry:
     title: str

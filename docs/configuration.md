@@ -83,6 +83,7 @@ automatic matching cannot select a profile:
   "processing": {
     "profiles_dir": "profiles",
     "default_profile": "tech-news",
+    "cross_day_dedup_days": 7,
     "profile_settings": {
       "tech-news": {
         "threshold": 7.0,
@@ -99,6 +100,9 @@ automatic matching cannot select a profile:
 
 - `profiles_dir`: Directory containing one subdirectory per processing profile.
 - `default_profile`: ID of a profile present in `profiles_dir`.
+- `cross_day_dedup_days`: Drop items whose URL or normalized title appeared in
+  the previous N daily summaries before analysis. `0` disables cross-day
+  filtering; `7` is a good default for recurring GitHub trending projects.
 - `profile_settings`: User preferences keyed by profile ID. `threshold` accepts
   `0` through `10` or `null` for no score filter; `topic_dedup` defaults to
   `true`. Unknown profile IDs are rejected when Horizon starts.
@@ -628,18 +632,25 @@ configuration. Each profile can use a different `threshold`; set it to `null` or
 omit that profile's settings to disable score filtering. See [Processing
 Profiles](profiles.md#filtering) and [Scoring](scoring.md).
 
-The runtime `collection` section controls the fetch window and contains only
-`time_window_hours`:
+The runtime `collection` section controls the fetch window and the calendar
+timezone used for summary dates:
 
 ```json
 {
   "collection": {
-    "time_window_hours": 24
+    "time_window_hours": 24,
+    "digest_timezone": "Asia/Shanghai"
   }
 }
 ```
 
 - `time_window_hours`: Fetch content from last N hours
+- `digest_timezone`: IANA timezone used for summary filenames, Jekyll posts,
+  email subjects, and webhook payload dates. The fetch window is still an
+  absolute duration; this only fixes the calendar label. A 07:00
+  Asia/Shanghai run is 23:00 UTC on the previous day, so the default `UTC`
+  produces yesterday's filename. Set this to the timezone of your delivery
+  schedule.
 
 The runtime `digest` section controls final section order and optional balanced
 digest limits:

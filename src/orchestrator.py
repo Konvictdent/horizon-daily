@@ -3,11 +3,12 @@
 import asyncio
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from functools import cached_property
 from pathlib import Path
 from typing import Dict, List, Literal, Optional
 from urllib.parse import unquote_plus, urlsplit
+from zoneinfo import ZoneInfo
 import httpx
 from rich.console import Console
 
@@ -37,6 +38,11 @@ from .ai.enricher import ContentEnricher, EnrichmentBatchResult
 from .ai.tokens import get_usage_snapshot
 from .processing import ProfileRegistry
 from .processing.content import COMMENTS_MARKER, split_content
+from .processing.history import (
+    digest_title_key,
+    digest_url_key,
+    recent_digest_keys,
+)
 from .processing.tools import ToolRegistry
 
 
@@ -260,6 +266,8 @@ class HorizonOrchestrator:
             self.email_manager.check_subscriptions(self.storage)
 
         try:
+            today = self.digest_date()
+
             # 1. Determine time window
             since = self._determine_time_window(force_hours)
             self.console.print(
@@ -288,6 +296,10 @@ class HorizonOrchestrator:
                     f"{len(all_items) - len(merged_items)} cross-source duplicates "
                     f"→ {len(merged_items)} unique items\n"
                 )
+
+            merged_items = self.filter_recent_digest_items(
+                merged_items, before=date.fromisoformat(today)
+            )
 
             # 4. Analyze with AI
             analyzed_items = await self.analyze_items(merged_items)
@@ -319,7 +331,6 @@ class HorizonOrchestrator:
                 )
 
             # 7. Generate and save daily summaries for each configured language
-            today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
             for lang in self.config.ai.languages:
                 language_items = [
                     item for item in important_items
@@ -427,12 +438,12 @@ class HorizonOrchestrator:
             # Send webhook failure notification if configured
             if self.webhook_notifier:
                 await self.webhook_notifier.send_failure(
-                    date=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                    date=self.digest_date(),
                     error_message=str(e),
                 )
             if self.wechat_notifier:
                 await self.wechat_notifier.send_failure(
-                    date=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                    date=self.digest_date(),
                     error_message=str(e),
                 )
 
@@ -441,6 +452,59 @@ class HorizonOrchestrator:
     def _determine_time_window(self, force_hours: Optional[int] = None) -> datetime:
         hours = force_hours if force_hours is not None else self.config.collection.time_window_hours
         return datetime.now(timezone.utc) - timedelta(hours=hours)
+
+    def digest_date(self, now: Optional[datetime] = None) -> str:
+        """Calendar date for filenames and delivery, in the configured zone."""
+        current = now or datetime.now(timezone.utc)
+        timezone_name = getattr(
+            self.config.collection, "digest_timezone", "UTC"
+        )
+        zone = ZoneInfo(timezone_name)
+        return current.astimezone(zone).strftime("%Y-%m-%d")
+
+    def filter_recent_digest_items(
+        self,
+        items: List[ContentItem],
+        *,
+        before: date,
+        days: Optional[int] = None,
+        log: bool = True,
+    ) -> List[ContentItem]:
+        """Drop items already published in recent daily digests.
+
+        Runs before AI analysis so repeated URLs/titles do not consume tokens
+        or occupy a category quota.
+        """
+        window = (
+            getattr(
+                self.config.processing, "cross_day_dedup_days", 0
+            )
+            if days is None
+            else days
+        )
+        if window <= 0:
+            return items
+        recent_urls, recent_titles = recent_digest_keys(
+            self.storage.summaries_dir, days=window, before=before
+        )
+        if not recent_urls and not recent_titles:
+            return items
+
+        kept: List[ContentItem] = []
+        removed = 0
+        for item in items:
+            url_key = digest_url_key(str(item.url))
+            title_key = digest_title_key(item.title)
+            if url_key in recent_urls or (title_key and title_key in recent_titles):
+                removed += 1
+                continue
+            kept.append(item)
+        if log and removed:
+            self.console.print(
+                f"{self.icons['cleanup']} Removed {removed} items already in "
+                f"the last {window} digests → {len(kept)} unique items\n"
+            )
+        return kept
 
     async def fetch_all_sources(self, since: datetime) -> List[ContentItem]:
         """Fetch content from all configured sources.
