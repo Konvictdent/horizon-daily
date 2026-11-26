@@ -58,7 +58,12 @@ git worktree prune
 retry git fetch --quiet origin gh-pages
 
 git worktree add --detach "$TMPDIR" origin/gh-pages
-cp -r docs/* "$TMPDIR/"
+if command -v rsync >/dev/null 2>&1; then
+    rsync -a --delete --exclude=.git docs/ "$TMPDIR/"
+else
+    find "$TMPDIR" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+    cp -r docs/* "$TMPDIR/"
+fi
 
 cd "$TMPDIR"
 git add -A
